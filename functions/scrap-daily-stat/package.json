@@ -15,9 +15,11 @@
   "license": "MIT",
   "dependencies": {
     "chrome-aws-lambda": "^2.0.1",
+    "dotenv": "^8.2.0",
     "jsdom": "^15.2.1",
     "node-fetch": "^2.3.0",
-    "puppeteer-core": "^2.0.0"
+    "puppeteer-core": "^2.0.0",
+    "spacetime": "^6.3.0"
   },
   "devDependencies": {
     "puppeteer": "^2.0.0"
