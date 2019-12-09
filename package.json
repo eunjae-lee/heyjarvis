@@ -6,6 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "netlify dev",
+    "prebuild": "cd functions/scrap-daily-stat && npm install",
+    "build": "echo 'nothing to build'",
     "scrap-daily-stat": "netlify functions:invoke --name scrap-daily-stat --no-identity"
   },
   "repository": {
