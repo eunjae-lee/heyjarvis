@@ -1,0 +1,19 @@
+{
+  "name": "heyjarvis-root",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eunjae-lee/heyjarvis.git"
+  },
+  "author": "Eunjae Lee <karis612@gmail.com> (https://github.com/eunjae-lee)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eunjae-lee/heyjarvis/issues"
+  },
+  "homepage": "https://github.com/eunjae-lee/heyjarvis#readme"
+}
