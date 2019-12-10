@@ -1,9 +1,7 @@
-/* eslint-disable */
-const fetch = require("node-fetch");
-const chromium = require("chrome-aws-lambda");
-const { JSDOM } = require("jsdom");
-const spacetime = require("spacetime");
-require("dotenv").config();
+import fetch from "node-fetch";
+import { JSDOM } from "jsdom";
+import spacetime from "spacetime";
+import puppeteer from "puppeteer";
 
 const docId = "xU5d3ppMXO";
 const tableIds = {
@@ -12,16 +10,30 @@ const tableIds = {
   instagramMinji: "grid-uYb-hFvmNF"
 };
 
-// https://bitsofco.de/how-to-use-puppeteer-in-a-netlify-aws-lambda-function/
-exports.handler = async function(event, context) {
+export async function scrapDailyStat(event, context) {
   try {
+    const yesterday = spacetime
+      .now()
+      .goto("Europe/Paris")
+      .subtract(1, "day")
+      .format("en-GB");
     const twitterInfo = await getTwitterInfo("eunjae_lee");
     const instagramEunjae = await getInstagramInfo("eunjae.dev");
     const instagramMinji = await getInstagramInfo("minji.mps");
 
-    await insertToCoda(docId, tableIds.twitter, twitterInfo);
-    await insertToCoda(docId, tableIds.instagramEunjae, instagramEunjae);
-    await insertToCoda(docId, tableIds.instagramMinji, instagramMinji);
+    await insertToCoda(docId, tableIds.twitter, twitterInfo, yesterday);
+    await insertToCoda(
+      docId,
+      tableIds.instagramEunjae,
+      instagramEunjae,
+      yesterday
+    );
+    await insertToCoda(
+      docId,
+      tableIds.instagramMinji,
+      instagramMinji,
+      yesterday
+    );
 
     return {
       statusCode: 200,
@@ -34,7 +46,7 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({ msg: err.message }) // Could be a custom message or object i.e. JSON.stringify(err)
     };
   }
-};
+}
 
 async function getTwitterInfo(username) {
   const dom = await getDom(`https://twitter.com/${username}`);
@@ -64,9 +76,7 @@ async function getInstagramInfo(username) {
 }
 
 async function getDom(url) {
-  const browser = await chromium.puppeteer.launch({
-    executablePath: await chromium.executablePath
-  });
+  const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto(url);
 
@@ -75,17 +85,14 @@ async function getDom(url) {
   return dom;
 }
 
-async function insertToCoda(docId, tableId, data) {
+async function insertToCoda(docId, tableId, data, date) {
   const url = `https://coda.io/apis/v1beta1/docs/${docId}/tables/${tableId}/rows`;
   const payload = {
     rows: [
       {
         cells: Object.entries({
           ...data,
-          date: spacetime
-            .now()
-            .goto("Europe/Paris")
-            .format("en-GB")
+          date
         }).map(([column, value]) => ({ column, value }))
       }
     ]
