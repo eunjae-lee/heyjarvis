@@ -10,7 +10,7 @@ const tableIds = {
   instagramMinji: "grid-uYb-hFvmNF"
 };
 
-export async function scrapDailyStat(event, context) {
+export async function scrapDailyStat() {
   try {
     const yesterday = spacetime
       .now()
