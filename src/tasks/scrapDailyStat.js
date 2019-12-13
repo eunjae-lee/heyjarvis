@@ -68,8 +68,11 @@ async function getInstagramInfo(username) {
       .find(a => a.textContent.includes(label))
       .querySelector("span").textContent;
 
+  console.log("here1");
   const posts = getValueByLabel("posts");
+  console.log("here2");
   const followers = getValueByLabel("followers");
+  console.log("here3");
   const following = getValueByLabel("following");
 
   return { posts, followers, following };

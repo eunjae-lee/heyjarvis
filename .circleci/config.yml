@@ -55,6 +55,7 @@ workflows:
   version: 2
   ci:
     jobs:
+      - run_hourly_job
       - nothing
   run_job_every_hour:
     triggers:
