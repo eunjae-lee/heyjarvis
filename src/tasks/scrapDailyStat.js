@@ -19,7 +19,7 @@ export async function scrapDailyStat() {
       .format("en-GB");
     const twitterInfo = await getTwitterInfo("eunjae_lee");
     const instagramEunjae = await getInstagramInfo("eunjae.dev");
-    const instagramMinji = await getInstagramInfo("minji.mps");
+    const instagramMinji = await getInstagramInfo("merearchive");
 
     await insertToCoda(docId, tableIds.twitter, twitterInfo, yesterday);
     await insertToCoda(

@@ -4,5 +4,10 @@ require("dotenv").config();
 require = require("esm")(module /*, options*/);
 
 (async function() {
-  await require("./main").run();
+  try {
+    await require("./main").run();
+  } catch (e) {
+    console.error(e);
+    process.exit(1);
+  }
 })();
