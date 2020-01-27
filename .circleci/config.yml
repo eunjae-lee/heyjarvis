@@ -32,7 +32,7 @@ defaults: &defaults
 
 version: 2
 jobs:
-  nothing:
+  ci:
     <<: *defaults
     steps:
       - checkout
@@ -40,6 +40,9 @@ jobs:
       - restore_cache: *restore_yarn_cache
       - run: *run_yarn_install
       - save_cache: *save_yarn_cache
+      - run:
+          name: Run Hourly Job
+          command: yarn run hourly
   run_hourly_job:
     <<: *defaults
     steps:
@@ -55,7 +58,7 @@ workflows:
   version: 2
   ci:
     jobs:
-      - nothing
+      - ci
   run_job_every_hour:
     triggers:
       - schedule:
