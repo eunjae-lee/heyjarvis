@@ -2,6 +2,7 @@ import fetch from "node-fetch";
 import { JSDOM } from "jsdom";
 import spacetime from "spacetime";
 import puppeteer from "puppeteer";
+import Twitter from "twitter";
 
 const docId = "xU5d3ppMXO";
 const tableIds = {
@@ -18,22 +19,22 @@ export async function scrapDailyStat() {
       .subtract(1, "day")
       .format("en-GB");
     const twitterInfo = await getTwitterInfo("eunjae_lee");
-    const instagramEunjae = await getInstagramInfo("eunjae.dev");
-    const instagramMinji = await getInstagramInfo("merearchive");
+    // const instagramEunjae = await getInstagramInfo("eunjae.dev");
+    // const instagramMinji = await getInstagramInfo("merearchive");
 
-    await insertToCoda(docId, tableIds.twitter, twitterInfo, yesterday);
-    await insertToCoda(
-      docId,
-      tableIds.instagramEunjae,
-      instagramEunjae,
-      yesterday
-    );
-    await insertToCoda(
-      docId,
-      tableIds.instagramMinji,
-      instagramMinji,
-      yesterday
-    );
+    // await insertToCoda(docId, tableIds.twitter, twitterInfo, yesterday);
+    // await insertToCoda(
+    //   docId,
+    //   tableIds.instagramEunjae,
+    //   instagramEunjae,
+    //   yesterday
+    // );
+    // await insertToCoda(
+    //   docId,
+    //   tableIds.instagramMinji,
+    //   instagramMinji,
+    //   yesterday
+    // );
 
     return {
       statusCode: 200,
@@ -49,15 +50,18 @@ export async function scrapDailyStat() {
 }
 
 async function getTwitterInfo(username) {
-  const dom = await getDom(`https://twitter.com/${username}`);
-  const getValueByClassName = className =>
-    dom.window.document.body
-      .querySelector(`li.${className} span.ProfileNav-value`)
-      .getAttribute("data-count");
+  const client = new Twitter({
+    consumer_key: process.env.TWITTER_CONSUMER_KEY,
+    consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+    access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
+    access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
+  });
+  const {
+    statuses_count: tweets,
+    friends_count: following,
+    followers_count: followers
+  } = await client.get("users/show", { screen_name: username });
 
-  const tweets = getValueByClassName("ProfileNav-item--tweets");
-  const following = getValueByClassName("ProfileNav-item--following");
-  const followers = getValueByClassName("ProfileNav-item--followers");
   return { tweets, following, followers };
 }
 
@@ -75,11 +79,15 @@ async function getInstagramInfo(username) {
   return { posts, followers, following };
 }
 
-async function getDom(url) {
+async function getDom(url, selector = null) {
   const browser = await puppeteer.launch();
+  // const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
-  await page.goto(url);
+  await page.goto(url, { waitUntil: "networkidle2" });
 
+  if (selector) {
+    await page.waitForSelector(selector);
+  }
   const dom = new JSDOM(await page.evaluate(() => document.body.innerHTML));
   await browser.close();
   return dom;
