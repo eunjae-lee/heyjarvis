@@ -19,22 +19,22 @@ export async function scrapDailyStat() {
       .subtract(1, "day")
       .format("en-GB");
     const twitterInfo = await getTwitterInfo("eunjae_lee");
-    // const instagramEunjae = await getInstagramInfo("eunjae.dev");
-    // const instagramMinji = await getInstagramInfo("merearchive");
+    const instagramEunjae = await getInstagramInfo("eunjae.dev");
+    const instagramMinji = await getInstagramInfo("merearchive");
 
-    // await insertToCoda(docId, tableIds.twitter, twitterInfo, yesterday);
-    // await insertToCoda(
-    //   docId,
-    //   tableIds.instagramEunjae,
-    //   instagramEunjae,
-    //   yesterday
-    // );
-    // await insertToCoda(
-    //   docId,
-    //   tableIds.instagramMinji,
-    //   instagramMinji,
-    //   yesterday
-    // );
+    await insertToCoda(docId, tableIds.twitter, twitterInfo, yesterday);
+    await insertToCoda(
+      docId,
+      tableIds.instagramEunjae,
+      instagramEunjae,
+      yesterday
+    );
+    await insertToCoda(
+      docId,
+      tableIds.instagramMinji,
+      instagramMinji,
+      yesterday
+    );
 
     return {
       statusCode: 200,
